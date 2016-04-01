@@ -1,0 +1,55 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="PdfDir" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Books</Value>
+    </Setting>
+    <Setting Name="PdfFilter" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">20*.pdf</Value>
+    </Setting>
+    <Setting Name="ZBarPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Program Files (x86)\ZBar\bin\zbarimg.exe</Value>
+    </Setting>
+    <Setting Name="ImportCsvPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Books\02shihon_backup.csv</Value>
+    </Setting>
+    <Setting Name="IsbnRegex" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">(491|978).*</Value>
+    </Setting>
+    <Setting Name="ExportCsvPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Books\03shihon_edit.csv</Value>
+    </Setting>
+    <Setting Name="FileNameOriginal" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">*[ISBN].pdf</Value>
+    </Setting>
+    <Setting Name="FileNameReplace" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">【[作者1]】[タイトル].[ISBN].pdf</Value>
+    </Setting>
+    <Setting Name="RenameIsbnBatchPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Books\01RenameIsbn.bat</Value>
+    </Setting>
+    <Setting Name="chkDoRenameIsbnBatch" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RenameBookBatchPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Books\04RenameBook.bat</Value>
+    </Setting>
+    <Setting Name="FileNameReplaceEtc" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">【】	
+:	：
+;	；
+/	／
+\	\
+|	｜
+,	，
+?	？
+"	＂
+&lt;	＜
+&gt;	＞</Value>
+    </Setting>
+    <Setting Name="DoRenameBookBatach" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
