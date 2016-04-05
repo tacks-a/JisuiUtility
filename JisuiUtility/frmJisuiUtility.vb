@@ -413,7 +413,7 @@ Public Class frmJisuiUtility
             For Each strRep As String In repLines.Split(vbCrLf)
                 Dim aryRep As String() = strRep.Split(vbTab)
                 If aryRep.Length = 2 Then
-                    .Replace(aryRep(0), aryRep(1))
+                    .Replace(aryRep(0).Trim(), aryRep(1).Trim())
                 End If
             Next
         End With
