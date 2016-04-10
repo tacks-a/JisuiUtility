@@ -226,6 +226,7 @@ Public Class frmJisuiUtility
             Else
                 'ISBNを取得できない場合は、コメントを追加
                 command = Me.StringToCommandComment(String.Format("""{0}""", pdfFile))
+                command &= Me.StringToCommandComment(Me.GetPdfText(pdfFile, 6, 1))
             End If
 
         Catch ex As Exception
@@ -284,6 +285,34 @@ Public Class frmJisuiUtility
         End Try
 
         Return ImgList
+    End Function
+
+    ''' <summary>
+    '''  Extract Text from PDF file and Store in Image Object
+    ''' </summary>
+    ''' <param name="PDFSourcePath">Specify PDF Source Path</param>
+    ''' <returns>List</returns>
+    ''' <remarks>
+    ''' 下記のページを参考にした
+    ''' http://monobook.org/wiki/Mono/PDF%E3%81%8B%E3%82%89%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%82%92%E6%8A%BD%E5%87%BA%E3%81%99%E3%82%8B
+    ''' </remarks>
+    Public Function GetPdfText(ByVal PDFSourcePath As String, ByVal FirstPageCount As Integer, ByVal LastPageCount As Integer) As String
+        Dim rtn As New System.Text.StringBuilder()
+
+        Using pdfReader = New PdfReader(PDFSourcePath)
+            For pageNum As Integer = 1 To pdfReader.NumberOfPages
+                If pageNum <= FirstPageCount OrElse pdfReader.NumberOfPages - pageNum < LastPageCount Then
+                    ' １ページまるごとテキスト化
+                    Dim text = PdfTextExtractor.GetTextFromPage(pdfReader, pageNum)
+
+                    rtn.Append(pageNum & "ページ目" & vbTab)
+                    rtn.AppendLine(Mid(text.Replace(vbCr, " ").Replace(vbLf, " "), 1, 800))
+                End If
+            Next
+
+        End Using
+
+        Return rtn.ToString()
     End Function
 
     ''' <summary>
@@ -412,9 +441,15 @@ Public Class frmJisuiUtility
     ''' <remarks></remarks>
     Public Function StringToCommandComment(ByVal source As String) As String
         Dim rtn As New System.Text.StringBuilder
-        For Each strLine As String In source.Split(vbCrLf)
-            rtn.Append("rem ")
-            rtn.AppendLine(strLine.Trim)
+        Dim maxLength As Integer = 1000
+        For Each strLine As String In source.Split(vbLf)
+            For i As Integer = 0 To strLine.Length - 1 Step maxLength
+                rtn.Append("rem ")
+                Dim wk As String = strLine.Trim.Replace(vbCr, "").Replace(vbLf, "")
+                wk = wk.Substring(i, Math.Min(wk.Length - i, maxLength))
+                rtn.AppendLine(wk)
+
+            Next
         Next
         Return rtn.ToString()
     End Function
