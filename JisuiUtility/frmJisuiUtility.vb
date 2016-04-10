@@ -68,19 +68,12 @@ Public Class frmJisuiUtility
                 GC.Collect()
 
                 'ISBNを取得
-                Dim isbn As String = Me.GetIsbnFromPdf(pdfFile)
-                If isbn.Length <> 0 Then
-                    'ISBNを追加
-                    Me.txtIsbn.AppendText(isbn & vbCrLf)
+                Dim isbn As String = String.Empty
+                Dim cmd As String = String.Empty
+                Me.SetIsbnAndRenameCommand(pdfFile, isbn, cmd)
 
-                    'リネーム用のコマンド
-                    txtIsbnCmd.AppendText(String.Format("rename ""{0}"" ""{1}.pdf""" & vbCrLf, _
-                                                        pdfFile, _
-                                                        isbn))
-                Else
-                    'ISBNを取得できない場合は、コメントを追加
-                    txtIsbnCmd.AppendText(String.Format("rem ""{0}""" & vbCrLf, pdfFile))
-                End If
+                Me.txtIsbn.AppendText(isbn & vbCrLf)
+                Me.txtIsbnCmd.AppendText(cmd & vbCrLf)
             Next
 
             'バッチファイル作成
@@ -112,8 +105,8 @@ Public Class frmJisuiUtility
             For Each row As DataRow In dt.Rows
                 'リネームコマンド作成
                 Dim stbCommand As New System.Text.StringBuilder
-                Dim srcFile As String = Me.FormatFileName(Me.txtFileNameOriginal.Text, dt, row, Me.txtFileNameReplaceEtc.Text)
-                Dim dstFile As String = Me.FormatFileName(Me.txtFileNameReplace.Text, dt, row, Me.txtFileNameReplaceEtc.Text)
+                Dim srcFile As String = Me.FormatFileName(Me.txtFileNameOriginal.Text, row, Me.txtFileNameReplaceEtc.Text)
+                Dim dstFile As String = Me.FormatFileName(Me.txtFileNameReplace.Text, row, Me.txtFileNameReplaceEtc.Text)
                 stbCommand.Append("rename """)
                 stbCommand.Append(txtPdfDir.Text.TrimEnd("\") & "\")
                 stbCommand.Append(srcFile)
@@ -185,42 +178,62 @@ Public Class frmJisuiUtility
     ''' PDFファイルからISBNを取得する
     ''' </summary>
     ''' <param name="pdfFile"></param>
-    ''' <returns></returns>
+    ''' <param name="isbn"></param>
+    ''' <param name="command"></param>
     ''' <remarks></remarks>
-    Public Function GetIsbnFromPdf(ByVal pdfFile As String) As String
+    Public Sub SetIsbnAndRenameCommand(ByVal pdfFile As String, ByRef isbn As String, ByRef command As String)
+        Try
+            isbn = String.Empty
+            command = String.Empty
 
-        'PDFを読み込んで、最初と最後のページのバーコード読み取り
-        Dim imageList As List(Of System.Drawing.Image) = ExtractImages(pdfFile)
-        Dim targetPageIndexList As New List(Of Integer)
-        Dim newFileName As New System.Text.StringBuilder()
-        If imageList.Count > 0 Then
-            targetPageIndexList.Add(0)
-            targetPageIndexList.Add(imageList.Count - 1)
-        End If
-        For Each pageIndex As Integer In targetPageIndexList
-            'テンポラリファイル作成
-            Dim savePath As String = System.IO.Path.Combine(Me.TmpDir, System.IO.Path.GetFileNameWithoutExtension(pdfFile) & pageIndex & ".jpg")
-            imageList(pageIndex).Save(savePath, Imaging.ImageFormat.Jpeg)
+            'PDFを読み込んで、最初と最後のページのバーコード読み取り
+            Dim imageList As List(Of System.Drawing.Image) = ExtractImages(pdfFile)
+            Dim targetPageIndexList As New List(Of Integer)
+            Dim stbIsbn As New System.Text.StringBuilder()
+            If imageList.Count > 0 Then
+                targetPageIndexList.Add(0)
+                targetPageIndexList.Add(imageList.Count - 1)
+            End If
+            For Each pageIndex As Integer In targetPageIndexList
+                'テンポラリファイル作成
+                Dim savePath As String = System.IO.Path.Combine(Me.TmpDir, System.IO.Path.GetFileNameWithoutExtension(pdfFile) & pageIndex & ".jpg")
+                imageList(pageIndex).Save(savePath, Imaging.ImageFormat.Jpeg)
 
-            'イメージを表示
-            Me.picBarcode.Image = imageList(pageIndex)
-            Me.Refresh()
-            Application.DoEvents()
+                'イメージを表示
+                Me.picBarcode.Image = imageList(pageIndex)
+                Me.Refresh()
+                Application.DoEvents()
 
-            'バーコード読み取り
-            Dim barcode As String = ExecZBar(savePath)
-            For Each readText As String In barcode.Split(vbLf)
-                If readText.StartsWith("EAN-13:") Then
-                    Dim isbn As String = readText.Replace("EAN-13:", "").Trim()
-                    If System.Text.RegularExpressions.Regex.IsMatch(isbn, Me.txtIsbnRegex.Text) Then
-                        newFileName.Append(isbn & ".")
+                'バーコード読み取り
+                Dim barcode As String = ExecZBar(savePath)
+                For Each readText As String In barcode.Split(vbLf)
+                    If readText.StartsWith("EAN-13:") Then
+                        Dim isbnWk As String = readText.Replace("EAN-13:", "").Trim()
+                        If System.Text.RegularExpressions.Regex.IsMatch(isbnWk, Me.txtIsbnRegex.Text) Then
+                            stbIsbn.Append(isbnWk & ".")
+                        End If
                     End If
-                End If
+                Next
             Next
-        Next
+            isbn = stbIsbn.ToString().TrimEnd(".")
 
-        Return newFileName.ToString.TrimEnd(".")
-    End Function
+            'コマンド作成
+            If isbn.Length <> 0 Then
+                'リネーム用のコマンド
+                command = String.Format("rename ""{0}"" ""{1}.pdf""", _
+                                                    pdfFile, _
+                                                    isbn)
+            Else
+                'ISBNを取得できない場合は、コメントを追加
+                command = Me.StringToCommandComment(String.Format("""{0}""", pdfFile))
+            End If
+
+        Catch ex As Exception
+            command = Me.StringToCommandComment(String.Format("""{0}""", pdfFile))
+            command &= vbCrLf & Me.StringToCommandComment(ex.Message & vbCrLf & ex.StackTrace)
+        End Try
+
+    End Sub
 
     ''' <summary>
     '''  Extract Image from PDF file and Store in Image Object
@@ -308,17 +321,19 @@ Public Class frmJisuiUtility
     ''' <param name="doBatch"></param>
     ''' <remarks></remarks>
     Private Sub WriteBatch(ByVal batchPath As String, batchText As String, ByVal doBatch As Boolean)
+        Try
+            'バッチファイル作成
+            Using sw As New StreamWriter(batchPath, False, System.Text.Encoding.GetEncoding("shift_jis"))
+                sw.WriteLine(batchText)
+                sw.WriteLine("pause")
+            End Using
 
-        'バッチファイル作成
-        Using sw As New StreamWriter(batchPath, False, System.Text.Encoding.GetEncoding("shift_jis"))
-            sw.WriteLine(batchText)
-            sw.WriteLine("pause")
-        End Using
-
-        If doBatch Then
-            Process.Start(batchPath)
-        End If
-
+            If doBatch Then
+                Process.Start(batchPath)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("バッチファイルの作成に失敗しました" & vbCrLf & batchPath & vbCrLf & ex.Message & vbCrLf & ex.StackTrace)
+        End Try
     End Sub
 
     ''' <summary>
@@ -392,22 +407,33 @@ Public Class frmJisuiUtility
     End Sub
 
     ''' <summary>
+    ''' 文字列からコマンドプロンプトのコメントに変換
+    ''' </summary>
+    ''' <remarks></remarks>
+    Public Function StringToCommandComment(ByVal source As String) As String
+        Dim rtn As New System.Text.StringBuilder
+        For Each strLine As String In source.Split(vbCrLf)
+            rtn.Append("rem ")
+            rtn.AppendLine(strLine.Trim)
+        Next
+        Return rtn.ToString()
+    End Function
+
+    ''' <summary>
     ''' ファイル名をフォーマット
     ''' </summary>
     ''' <param name="originalFileName"></param>
-    ''' <param name="dt"></param>
     ''' <param name="row"></param>
     ''' <param name="repLines"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function FormatFileName(ByVal originalFileName As String, _
-                                ByVal dt As DataTable, _
+    Public Function FormatFileName(ByVal originalFileName As String, _
                                 ByVal row As DataRow, _
                                 ByVal repLines As String) As String
         Dim editFileName As New System.Text.StringBuilder()
         editFileName.Append(originalFileName)
         With editFileName
-            For Each col As DataColumn In dt.Columns
+            For Each col As DataColumn In row.Table.Columns
                 .Replace("[" & col.ColumnName & "]", row(col))
             Next
             For Each strRep As String In repLines.Split(vbCrLf)
@@ -419,7 +445,6 @@ Public Class frmJisuiUtility
         End With
         Return editFileName.ToString()
     End Function
-
 
 #End Region
 

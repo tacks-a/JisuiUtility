@@ -35,21 +35,24 @@
     <Setting Name="RenameBookBatchPath" Type="System.String" Scope="Application">
       <Value Profile="(Default)">D:\Books\04RenameBook.bat</Value>
     </Setting>
+    <Setting Name="DoRenameBookBatach" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
     <Setting Name="FileNameReplaceEtc" Type="System.String" Scope="Application">
       <Value Profile="(Default)">【】	
 :	：
 ;	；
 /	／
-\	\
+\	￥
 |	｜
 ,	，
 ?	？
-"	＂
+"	'
+＂	'
+“	'
+”	'
 &lt;	＜
 &gt;	＞</Value>
-    </Setting>
-    <Setting Name="DoRenameBookBatach" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

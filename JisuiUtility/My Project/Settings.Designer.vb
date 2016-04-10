@@ -155,19 +155,19 @@ Namespace My
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("【】"&Global.Microsoft.VisualBasic.ChrW(9)&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&":"&Global.Microsoft.VisualBasic.ChrW(9)&"："&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&";"&Global.Microsoft.VisualBasic.ChrW(9)&"；"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"/"&Global.Microsoft.VisualBasic.ChrW(9)&"／"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"\"&Global.Microsoft.VisualBasic.ChrW(9)&"\"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"|"&Global.Microsoft.VisualBasic.ChrW(9)&"｜"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&","&Global.Microsoft.VisualBasic.ChrW(9)&"，"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"?"&Global.Microsoft.VisualBasic.ChrW(9)&"？"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&""""&Global.Microsoft.VisualBasic.ChrW(9)&"＂＂"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<"&Global.Microsoft.VisualBasic.ChrW(9)&"＜"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&">"&Global.Microsoft.VisualBasic.ChrW(9)&"＞")>  _
-        Public ReadOnly Property FileNameReplaceEtc() As String
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
+        Public ReadOnly Property DoRenameBookBatach() As Boolean
             Get
-                Return CType(Me("FileNameReplaceEtc"),String)
+                Return CType(Me("DoRenameBookBatach"),Boolean)
             End Get
         End Property
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
-        Public ReadOnly Property DoRenameBookBatach() As Boolean
+         Global.System.Configuration.DefaultSettingValueAttribute("【】"&Global.Microsoft.VisualBasic.ChrW(9)&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&":"&Global.Microsoft.VisualBasic.ChrW(9)&"："&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&";"&Global.Microsoft.VisualBasic.ChrW(9)&"；"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"/"&Global.Microsoft.VisualBasic.ChrW(9)&"／"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"\"&Global.Microsoft.VisualBasic.ChrW(9)&"￥"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"|"&Global.Microsoft.VisualBasic.ChrW(9)&"｜"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&","&Global.Microsoft.VisualBasic.ChrW(9)&"，"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"?"&Global.Microsoft.VisualBasic.ChrW(9)&"？"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&""""&Global.Microsoft.VisualBasic.ChrW(9)&"'"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"＂＂"&Global.Microsoft.VisualBasic.ChrW(9)&"'"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"““"&Global.Microsoft.VisualBasic.ChrW(9)&"'"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"””"&Global.Microsoft.VisualBasic.ChrW(9)&"'"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"<"&Global.Microsoft.VisualBasic.ChrW(9)&"＜"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&">"&Global.Microsoft.VisualBasic.ChrW(9)&"＞")>  _
+        Public ReadOnly Property FileNameReplaceEtc() As String
             Get
-                Return CType(Me("DoRenameBookBatach"),Boolean)
+                Return CType(Me("FileNameReplaceEtc"),String)
             End Get
         End Property
     End Class
